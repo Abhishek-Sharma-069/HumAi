@@ -1,16 +1,15 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const healthSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    healthData: {
-        bloodPressure: String,
-        bloodSugar: String,
-        heartRate: String,
-        temperature: String,
-    },
-    timestamp: { type: Date, default: Date.now },
-}, { timestamps: true });
+const healthSchema = mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    symptoms: { type: String, required: true },
+    diagnosis: { type: String },
+    medications: { type: String },
+    notes: { type: String },
+  },
+  { timestamps: true }
+);
 
-const HealthData = mongoose.model("HealthData", healthSchema);
-
-module.exports = HealthData;
+const HealthRecord = mongoose.model("HealthRecord", healthSchema);
+export default HealthRecord;

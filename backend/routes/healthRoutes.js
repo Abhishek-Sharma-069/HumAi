@@ -1,9 +1,15 @@
-const express = require("express");
-const { saveHealthData, getHealthData } = require("../controllers/healthController");
+import express from "express";
+import {
+  createHealthRecord,
+  getHealthRecords,
+  updateHealthRecord,
+  deleteHealthRecord,
+} from "../controllers/healthController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/save", saveHealthData);
-router.get("/data", getHealthData);
+router.route("/").post(protect, createHealthRecord).get(protect, getHealthRecords);
+router.route("/:id").put(protect, updateHealthRecord).delete(protect, deleteHealthRecord);
 
-module.exports = router;
+export default router;

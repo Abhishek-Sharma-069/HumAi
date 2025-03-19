@@ -1,17 +1,47 @@
-@import "tailwindcss";
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@layer base {
+  body {
+    @apply bg-white text-gray-800;
+  }
+}
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+  }
+  .btn-secondary {
+    @apply bg-secondary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+  }
+  .container {
+    @apply mx-auto px-4 max-w-7xl;
+  }
+  .nav-link {
+    @apply text-gray-700 hover:text-primary transition-colors;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-white text-gray-800;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+  }
+  .btn-secondary {
+    @apply bg-secondary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+  }
+  .container {
+    @apply mx-auto px-4 max-w-7xl;
+  }
+  .nav-link {
+    @apply text-gray-700 hover:text-primary transition-colors;
+  }
 }
 
 a {
