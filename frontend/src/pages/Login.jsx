@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  // const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
-      // await signInWithGoogle();
+      await signInWithGoogle();
       navigate('/');
     } catch (error) {
       setError('Failed to sign in with Google');
@@ -29,7 +41,7 @@ const Login = () => {
           </div>
         )}
 
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="email">
               Email Address

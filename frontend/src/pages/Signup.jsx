@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  // const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       return setError('Passwords do not match');
     }
-    // Handle email/password signup here
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleGoogleSignIn = async () => {
     try {
-      // await signInWithGoogle();
+      await signInWithGoogle();
       navigate('/');
     } catch (error) {
       setError('Failed to sign up with Google');

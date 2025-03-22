@@ -10,11 +10,14 @@ import SymptomCheckerPage from './pages/SymptomCheckerPage'
 import Awareness from './pages/Awareness'
 import ArticleDetail from './pages/ArticleDetail'
 import Contact from './pages/Contact'
-// import { AuthProvider } from './context/AuthContext'
+import { AuthProvider } from './context/AuthContext'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
   return (
-    // <AuthProvider>
+    <AuthProvider>
       <Router>
         <div className="min-h-screen bg-white">
           <Header />
@@ -25,16 +28,18 @@ function App() {
             <Features />
           </main>
         } />
-        <Route path="/symptom-checker" element={<SymptomCheckerPage />} />
+        <Route path="/symptom-checker" element={<PrivateRoute><SymptomCheckerPage /></PrivateRoute>} />
         <Route path="/awareness" element={<Awareness />} />
         <Route path="/awareness/category/:id" element={<Awareness />} />
         <Route path="/awareness/article/:id" element={<ArticleDetail />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         </Routes>
           <Footer />
         </div>
       </Router>
-   // </AuthProvider>
+    </AuthProvider>
   )
 
 }

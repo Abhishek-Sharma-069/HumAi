@@ -1,6 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Hero = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSymptomCheck = () => {
+    if (user) {
+      navigate('/symptom-checker');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-20 bg-accent">
       <div className="container mx-auto px-4">
@@ -12,9 +25,14 @@ const Hero = () => {
             <p className="text-lg md:text-xl text-gray-600 mb-8">
               Check your symptoms, get instant insights, and stay informed.
             </p>
-            <button className="btn-primary text-lg">
-              Check Symptoms
-            </button>
+            <div>
+              <button 
+                onClick={handleSymptomCheck}
+                className="btn-primary text-lg"
+              >
+                Check Symptoms
+              </button>
+            </div>
           </div>
           
           <div className="flex-1 flex justify-center">

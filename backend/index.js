@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 import userRoutes from "./routes/userRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import articleRoutes from "./routes/articleRoutes.js";
 
 // Use routes
 app.get('/', (req, res) => {
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/health", healthRoutes);
+app.use("/api/articles", articleRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
