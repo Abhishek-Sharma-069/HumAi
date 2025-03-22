@@ -10,10 +10,10 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+    @apply bg-primary text-white px-1 py-1 sm:px-3 sm:py-2 rounded-lg hover:bg-opacity-80 hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-auto text-sm max-w-[180px];
   }
   .btn-secondary {
-    @apply bg-secondary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+    @apply bg-secondary text-white px-1 py-1 sm:px-3 sm:py-2 rounded-lg hover:bg-opacity-80 hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-auto text-sm max-w-[180px];
   }
   .container {
     @apply mx-auto px-4 max-w-7xl;
@@ -31,10 +31,10 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+    @apply bg-primary text-white px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-opacity-80 hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-full sm:w-auto text-sm max-w-[200px];
   }
   .btn-secondary {
-    @apply bg-secondary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition-all;
+    @apply bg-secondary text-white px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-opacity-80 hover:shadow-md hover:scale-[1.02] transition-all duration-300 w-full sm:w-auto text-sm max-w-[200px];
   }
   .container {
     @apply mx-auto px-4 max-w-7xl;

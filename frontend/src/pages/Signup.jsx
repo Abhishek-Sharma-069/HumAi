@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, authLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,18 +20,27 @@ const Signup = () => {
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
+      toast.success('Account created successfully!');
       navigate('/');
     } catch (error) {
-      setError(error.message);
+      const errorMessage = error.code === 'auth/email-already-in-use' ? 'Email is already registered' :
+        error.code === 'auth/weak-password' ? 'Password should be at least 6 characters' :
+        error.code === 'auth/invalid-email' ? 'Invalid email format' :
+        'An error occurred during registration';
+      toast.error(errorMessage);
+      setError(errorMessage);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
+      toast.success('Successfully signed up with Google!');
       navigate('/');
     } catch (error) {
-      setError('Failed to sign up with Google');
+      const errorMessage = error.message || 'Failed to sign up with Google';
+      toast.error(errorMessage);
+      setError(errorMessage);
     }
   };
 
@@ -111,7 +121,8 @@ const Signup = () => {
 
           <button
             onClick={handleGoogleSignIn}
-            className="mt-4 w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200"
+            disabled={authLoading}
+            className={`mt-4 w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg transition duration-200 ${authLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

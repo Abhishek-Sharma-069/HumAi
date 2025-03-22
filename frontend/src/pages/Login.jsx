@@ -3,30 +3,40 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, authLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      toast.success('Successfully logged in!');
       navigate('/');
     } catch (error) {
-      setError(error.message);
+      const errorMessage = error.code === 'auth/wrong-password' ? 'Invalid password' :
+        error.code === 'auth/user-not-found' ? 'User not found' :
+        error.code === 'auth/invalid-email' ? 'Invalid email format' :
+        'An error occurred during login';
+      toast.error(errorMessage);
+      setError(errorMessage);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
+      toast.success('Successfully signed in with Google!');
       navigate('/');
     } catch (error) {
-      setError('Failed to sign in with Google');
+      const errorMessage = error.message || 'Failed to sign in with Google';
+      toast.error(errorMessage);
+      setError(errorMessage);
     }
   };
 
@@ -90,12 +100,13 @@ const Login = () => {
 
           <button
             onClick={handleGoogleSignIn}
-            className="mt-4 w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200"
+            disabled={authLoading}
+            className={`mt-4 w-full flex items-center justify-center gap-3 px-4 py-2 bg-primary text-white rounded-lg transition duration-200 ${authLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
               alt="Google"
-              className="w-5 h-5"
+              className="w-5 h-5 bg-white rounded-full p-1"
             />
             Sign in with Google
           </button>
