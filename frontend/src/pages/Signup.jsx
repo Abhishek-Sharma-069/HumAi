@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
-import { toast } from 'react-toastify';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -20,14 +19,14 @@ const Signup = () => {
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      toast.success('Account created successfully!');
+      console.log('Account created successfully');
       navigate('/');
     } catch (error) {
       const errorMessage = error.code === 'auth/email-already-in-use' ? 'Email is already registered' :
         error.code === 'auth/weak-password' ? 'Password should be at least 6 characters' :
         error.code === 'auth/invalid-email' ? 'Invalid email format' :
         'An error occurred during registration';
-      toast.error(errorMessage);
+      console.error('Registration error:', error);
       setError(errorMessage);
     }
   };
@@ -35,11 +34,11 @@ const Signup = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      toast.success('Successfully signed up with Google!');
+      console.log('Successfully signed up with Google');
       navigate('/');
     } catch (error) {
       const errorMessage = error.message || 'Failed to sign up with Google';
-      toast.error(errorMessage);
+      console.error('Google sign-up error:', error);
       setError(errorMessage);
     }
   };

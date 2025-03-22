@@ -1,16 +1,43 @@
-import mongoose from 'mongoose';
+import { getFirestore } from 'firebase-admin/firestore';
 
-const articleSchema = mongoose.Schema(
-  {
-    title: { type: String, required: true },
-    content: { type: String, required: true },
-    category: { type: String, required: true },
-    imageUrl: { type: String },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    isPublished: { type: Boolean, default: false },
+const db = getFirestore();
+const articlesCollection = db.collection('articles');
+
+const Article = {
+  create: async (data) => {
+    const docRef = await articlesCollection.add({
+      ...data,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+    return { id: docRef.id, ...data };
   },
-  { timestamps: true }
-);
 
-const Article = mongoose.model('Article', articleSchema);
+  findById: async (id) => {
+    const doc = await articlesCollection.doc(id).get();
+    if (!doc.exists) return null;
+    return { id: doc.id, ...doc.data() };
+  },
+
+  findAll: async () => {
+    const snapshot = await articlesCollection.get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  },
+
+  update: async (id, data) => {
+    const docRef = articlesCollection.doc(id);
+    await docRef.update({
+      ...data,
+      updatedAt: new Date().toISOString()
+    });
+    const updated = await docRef.get();
+    return { id: updated.id, ...updated.data() };
+  },
+
+  delete: async (id) => {
+    await articlesCollection.doc(id).delete();
+    return true;
+  }
+};
+
 export default Article;

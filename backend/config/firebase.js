@@ -2,11 +2,19 @@ import { initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getStorage } from 'firebase-admin/storage';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Parse the private key correctly
+const privateKey = process.env.FIREBASE_PRIVATE_KEY
+  ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+  : undefined;
+
 const serviceAccount = {
   "type": "service_account",
-  "project_id": "humai-069s",
+  "project_id": process.env.FIREBASE_PROJECT_ID,
   "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
-  "private_key": process.env.FIREBASE_PRIVATE_KEY,
+  "private_key": privateKey,
   "client_email": process.env.FIREBASE_CLIENT_EMAIL,
   "client_id": process.env.FIREBASE_CLIENT_ID,
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -19,6 +27,7 @@ const app = initializeApp({
   credential: cert(serviceAccount)
 });
 
-export const auth = getAuth(app);
-export const storage = getStorage(app);
-export default app;
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+export { app, auth, storage };

@@ -2,6 +2,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import userRoutes from './routes/userRoutes.js';
+import chatbotRoutes from './routes/chatbotRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
+import articleRoutes from './routes/articleRoutes.js';
+import './config/firebase.js';
 
 dotenv.config();
 
@@ -18,11 +23,6 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
         console.log("❌ MongoDB connection error:", err);
     });
 
-// Import routes
-import userRoutes from "./routes/userRoutes.js";
-import chatbotRoutes from "./routes/chatbotRoutes.js";
-import healthRoutes from "./routes/healthRoutes.js";
-
 // Use routes
 app.get('/', (req, res) => {
     res.send("Welcome to the Health Chatbot API");
@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/health", healthRoutes);
+app.use("/api/articles", articleRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

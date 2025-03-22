@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
-import { toast } from 'react-toastify';
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,28 +12,37 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      toast.success('Successfully logged in!');
+      console.log('Successfully logged in');
       navigate('/');
     } catch (error) {
-      const errorMessage = error.code === 'auth/wrong-password' ? 'Invalid password' :
+      const errorMessage = 
+        error.code === 'auth/wrong-password' ? 'Invalid password' :
         error.code === 'auth/user-not-found' ? 'User not found' :
         error.code === 'auth/invalid-email' ? 'Invalid email format' :
-        'An error occurred during login';
-      toast.error(errorMessage);
+        error.code === 'auth/invalid-credential' ? 'Invalid email or password' :
+        error.code === 'auth/too-many-requests' ? 'Too many failed attempts. Please try again later' :
+        'An error occurred during login. Please try again';
+      console.error('Login error:', error.code);
       setError(errorMessage);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    setError('');
     try {
       await signInWithGoogle();
-      toast.success('Successfully signed in with Google!');
+      console.log('Successfully signed in with Google');
       navigate('/');
     } catch (error) {
-      const errorMessage = error.message || 'Failed to sign in with Google';
-      toast.error(errorMessage);
+      const errorMessage = 
+        error.code === 'auth/popup-closed-by-user' ? 'Sign-in cancelled. Please try again' :
+        error.code === 'auth/popup-blocked' ? 'Sign-in popup was blocked. Please enable popups and try again' :
+        error.code === 'auth/unauthorized-domain' ? 'This domain is not authorized for Google sign-in' :
+        'Failed to sign in with Google. Please try again';
+      console.error('Google sign-in error:', error.code);
       setError(errorMessage);
     }
   };
