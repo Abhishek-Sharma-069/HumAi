@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { auth } from '../firebase';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,12 +11,17 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  const user = auth.currentUser;
-  if (user) {
-    const token = await user.getIdToken();
-    config.headers.Authorization = `Bearer ${token}`;
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const token = await user.getIdToken(true);
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  } catch (error) {
+    console.error('Error getting auth token:', error);
+    return Promise.reject(error);
   }
-  return config;
 });
 
 api.interceptors.response.use(

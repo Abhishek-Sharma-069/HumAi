@@ -1,7 +1,6 @@
-import { auth } from '../config/firebase.js';
-import { getFirestore } from 'firebase-admin/firestore';
+import { auth, db } from '../config/firebase.js';
 
-const db = getFirestore();
+
 
 // @desc Register new user
 // @route POST /api/users/register

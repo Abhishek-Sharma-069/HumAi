@@ -1,20 +1,41 @@
 {
-  "name": "fuck",
+  "name": "frontend",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "dependencies": {
+    "@firebase/storage": "^0.13.7",
+    "@tinymce/tinymce-react": "^6.0.0",
+    "axios": "^1.8.4",
+    "firebase": "^11.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-firebase-hooks": "^3.0.4",
+    "react-router-dom": "^6.0.0",
+    "react-toastify": "^7.0.4"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
-  "dependencies": {
-    "firebase": "^10.8.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^7.4.0",
-    "react-toastify": "^11.0.5"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
     "@eslint/js": "^8.56.0",
@@ -28,6 +49,6 @@
     "globals": "^13.24.0",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
-    "vite": "^5.0.12"
+    "vite": "^6.2.3"
   }
 }

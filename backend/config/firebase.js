@@ -1,33 +1,32 @@
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getStorage } from 'firebase-admin/storage';
+import admin from 'firebase-admin';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import { readFileSync } from 'fs';
 
-import dotenv from 'dotenv';
-dotenv.config();
+// Resolve __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Parse the private key correctly
-const privateKey = process.env.FIREBASE_PRIVATE_KEY
-  ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-  : undefined;
+// Load service account key using fs
+const serviceAccountPath = resolve(__dirname, './serviceAccountKey.json');
+const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf-8'));
 
-const serviceAccount = {
-  "type": "service_account",
-  "project_id": process.env.FIREBASE_PROJECT_ID,
-  "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
-  "private_key": privateKey,
-  "client_email": process.env.FIREBASE_CLIENT_EMAIL,
-  "client_id": process.env.FIREBASE_CLIENT_ID,
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": process.env.FIREBASE_CLIENT_CERT_URL
-};
+// Ensure Firebase Admin SDK is initialized only once
+if (!admin.apps.length) {
+  console.log('🔍 Initializing Firebase Admin SDK...');
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+    storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`
+  });
+} else {
+  console.log('✅ Firebase Admin SDK already initialized');
+}
 
-const app = initializeApp({
-  credential: cert(serviceAccount)
-});
+// Export Firebase services
+const app = admin.app(); // Use the default app
+const auth = admin.auth(); // Reuse the default auth instance
+const db = admin.firestore(); // Reuse the default Firestore instance
+const storage = admin.storage(); // Reuse the default storage instance
 
-const auth = getAuth(app);
-const storage = getStorage(app);
-
-export { app, auth, storage };
+export { app, auth, db, storage };

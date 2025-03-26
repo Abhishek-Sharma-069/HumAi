@@ -23,6 +23,18 @@ service cloud.firestore {
       allow create: if isAuthenticated() && userId == request.auth.uid;
     }
 
+    // Articles rules
+    match /articles/{articleId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Categories rules
+    match /categories/{categoryId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;
