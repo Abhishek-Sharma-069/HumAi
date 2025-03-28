@@ -1,4 +1,6 @@
 import React from 'react';
+import InputField from './inputBTN/InputField';
+import Button from './inputBTN/Button';
 
 const Footer = () => {
   return (
@@ -11,14 +13,13 @@ const Footer = () => {
             <p className="text-gray-600">Your AI Health Companion – Stay Informed, Stay Healthy.</p>
             <div className="mt-6">
               <h3 className="font-medium mb-2">Subscribe for health tips & updates</h3>
-              <div className="flex gap-2">
-                <input
+              <form className="flex flex-col gap-1 md:flex-row">
+                <InputField
                   type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Enter your email" className={"w-35"}
                 />
-                <button className="btn-primary whitespace-nowrap">Subscribe</button>
-              </div>
+                <Button>Subscribe</Button>
+              </form>
             </div>
           </div>
 

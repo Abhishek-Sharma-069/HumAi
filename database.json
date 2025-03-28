@@ -1,0 +1,30 @@
+{
+  "collections": {
+    "users": {
+      "schema": {
+        "email": "string",
+        "role": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        { "field": "email", "type": "unique" },
+        { "field": "role", "type": "regular" }
+      ]
+    },
+    "articles": {
+      "schema": {
+        "title": "string",
+        "content": "string",
+        "category": "string",
+        "imageUrl": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        { "field": "category", "type": "regular" },
+        { "field": "createdAt", "type": "regular" }
+      ]
+    }
+  }
+}

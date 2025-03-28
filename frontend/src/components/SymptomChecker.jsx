@@ -1,33 +1,67 @@
 import React, { useState } from 'react';
+import { symptomService } from '../services/symptomService';
 
 const SymptomChecker = () => {
   const [symptoms, setSymptoms] = useState('');
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState({
+    possibleConditions: [],
+    generalAnalysis: '',
+    probability: 'N/A',
+    recommendedActions: []
+  });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!symptoms.trim()) {
+      setError('Please describe your symptoms');
+      return;
+    }
+
     setLoading(true);
-    // Simulated API call - replace with actual AI integration
-    setTimeout(() => {
-      setResults({
-        conditions: [
-          {
-            name: 'Common Cold',
-            probability: 'High',
-            urgency: 'Mild',
-            recommendations: ['Rest', 'Stay hydrated', 'Over-the-counter medication']
-          },
-          {
-            name: 'Seasonal Allergies',
-            probability: 'Medium',
-            urgency: 'Mild',
-            recommendations: ['Antihistamines', 'Avoid triggers', 'Monitor symptoms']
-          }
-        ]
-      });
+    setError('');
+    setResults({
+      possibleConditions: [],
+      generalAnalysis: '',
+      probability: 'N/A',
+      recommendedActions: []
+    });
+    // setSymptoms('');
+
+    try {
+      const analysisReport = await symptomService.analyzeSymptoms(symptoms);
+      console.log('Symptom Analysis Response:', analysisReport);
+      
+      if (!analysisReport) {
+        throw new Error('Invalid or empty response from Gemini API');
+      }
+
+      // Update the UI with the analysis
+      setResults(analysisReport);
+      setError('');
+
+      // Wait for state update before scrolling
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Scroll to results section
+      const resultsSection = document.querySelector('.mt-8');
+      if (resultsSection) {
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      setError('');
+    } catch (error) {
+      console.error('Error analyzing symptoms:', error);
+      const errorMessage = error.message.includes('API key not valid') 
+        ? 'Invalid API key. Please check your environment configuration.' 
+        : 'Failed to analyze symptoms. Please try again.';
+      setError(errorMessage);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const UrgencyBadge = ({ level }) => {
@@ -86,26 +120,37 @@ const SymptomChecker = () => {
           {results && (
             <div className="mt-8 space-y-6">
               <h2 className="text-2xl font-bold mb-4">Analysis Results</h2>
-              {results.conditions.map((condition, index) => (
-                <div key={index} className="bg-white rounded-xl shadow-md p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-semibold">{condition.name}</h3>
-                    <UrgencyBadge level={condition.urgency} />
-                  </div>
-                  <div className="mb-4">
-                    <span className="text-sm font-medium text-gray-500">Probability:</span>
-                    <span className="ml-2 font-medium">{condition.probability}</span>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500 mb-2">Recommendations:</h4>
-                    <ul className="list-disc list-inside space-y-1">
-                      {condition.recommendations.map((rec, idx) => (
-                        <li key={idx} className="text-gray-600">{rec}</li>
-                      ))}
-                    </ul>
-                  </div>
+              
+              {/* Possible Conditions */}
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <h3 className="text-xl font-semibold mb-4">Possible Conditions</h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  {Array.isArray(results.possibleConditions) && results.possibleConditions.map((condition, index) => (
+                    <li key={index} className="text-gray-700">{condition}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* General Analysis */}
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <h3 className="text-xl font-semibold mb-4">General Analysis</h3>
+                <div className="text-gray-700">{results.generalAnalysis || 'No analysis available'}</div>
+                <div className="mt-4 flex items-center">
+                  <span className="text-gray-600 mr-2">Probability:</span>
+                  <UrgencyBadge level={results.probability || 'N/A'} />
                 </div>
-              ))}
+              </div>
+
+              {/* Recommended Actions */}
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <h3 className="text-xl font-semibold mb-4">Recommended Actions</h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  {Array.isArray(results.recommendedActions) && results.recommendedActions.map((action, index) => (
+                    <li key={index} className="text-gray-700">{action}</li>
+                  ))}
+                </ul>
+              </div>
+
               <div className="bg-blue-50 rounded-xl p-6 mt-6">
                 <p className="text-blue-800 text-sm">
                   Note: This is an AI-powered analysis and should not be considered as medical advice.

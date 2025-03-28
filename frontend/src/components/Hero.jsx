@@ -15,7 +15,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="pt-24 pb-12 md:pt-32 md:pb-20 bg-accent">
+    <section className="pt-24 pb-15 md:pt-15 md:pb-30 md:pl-6 bg-accent">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex-1 text-center md:text-left">
@@ -36,10 +36,10 @@ const Hero = () => {
           </div>
           
           <div className="flex-1 flex justify-center">
-            <div className="w-full max-w-md relative">
-              <div className="aspect-square rounded-2xl bg-white shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
+            <div className="w-full max-w-sm  relative">
+              <div className="aspect-square mb-4 rounded-2xl bg-white shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
                 <svg
-                  className="w-full h-full text-primary"
+                  className="w-full h-f text-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

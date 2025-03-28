@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import InputField from '../components/inputBTN/InputField';
+import Button from '../components/inputBTN/Button';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,8 +52,8 @@ const Login = () => {
 
   return (
     <div className="pt-24 pb-12">
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center mb-8 text-primary">Welcome Back</h2>
+      <div className="max-w-sm mx-auto bg-white rounded-xl shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-center mb-6 text-primary">Welcome Back</h2>
         
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -58,17 +61,16 @@ const Login = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="email">
               Email Address
             </label>
-            <input
+            <InputField
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Enter your email"
             />
           </div>
@@ -77,22 +79,18 @@ const Login = () => {
             <label className="block text-gray-700 mb-2" htmlFor="password">
               Password
             </label>
-            <input
+            <InputField
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Enter your password"
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition duration-200"
-          >
+          <Button type="submit" className="w-full">
             Sign In
-          </button>
+          </Button>
         </form>
 
         <div className="mt-6">
@@ -105,10 +103,10 @@ const Login = () => {
             </div>
           </div>
 
-          <button
+          <Button
             onClick={handleGoogleSignIn}
             disabled={authLoading}
-            className={`mt-4 w-full flex items-center justify-center gap-3 px-4 py-2 bg-primary text-white rounded-lg transition duration-200 ${authLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
+            className={`mt-4 w-full flex items-center justify-center gap-3 ${authLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
           >
             <img
               src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -116,10 +114,10 @@ const Login = () => {
               className="w-5 h-5 bg-white rounded-full p-1"
             />
             Sign in with Google
-          </button>
+          </Button>
         </div>
 
-        <p className="mt-8 text-center text-gray-600">
+        <p className="mt-6 text-center text-gray-600">
           Don't have an account?{' '}
           <Link to="/signup" className="text-primary hover:underline">
             Sign up

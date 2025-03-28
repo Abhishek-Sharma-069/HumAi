@@ -4,17 +4,17 @@ import Article from '../models/articleModel.js';
 // @route POST /api/articles
 const createArticle = async (req, res) => {
   try {
-    const { title, content, category, imageUrl } = req.body;
+    const { title, Description, categoryId, featuredImage } = req.body;
 
-    const article = await Article.create({
+    const newArticle = await Article.create({
+      user: req.user.id,
       title,
-      content,
-      category,
-      imageUrl,
-      author: req.user.id,
+      Description,
+      categoryId,
+      featuredImage,
     });
 
-    res.status(201).json(article);
+    res.status(201).json(newArticle);
   } catch (error) {
     res.status(500).json({ message: 'Error creating article' });
   }
@@ -24,48 +24,74 @@ const createArticle = async (req, res) => {
 // @route GET /api/articles
 const getArticles = async (req, res) => {
   try {
-    const articles = await Article.find().populate('author', 'name');
+    const articles = await Article.find();
     res.status(200).json(articles);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching articles' });
   }
 };
 
-// @desc Update article
-// @route PUT /api/articles/:id
-const updateArticle = async (req, res) => {
+// @desc Get article by ID
+// @route GET /api/articles/:id
+const getArticleById = async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
+
     if (!article) {
       return res.status(404).json({ message: 'Article not found' });
     }
 
-    const updatedArticle = await Article.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    res.status(200).json(article);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching article' });
+  }
+};
 
+// @desc Update an article
+// @route PUT /api/articles/:id
+const updateArticle = async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+
+    if (!article) {
+      return res.status(404).json({ message: 'Article not found' });
+    }
+
+    if (article.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    article.title = req.body.title || article.title;
+    article.Description = req.body.Description || article.Description;
+    article.categoryId = req.body.categoryId || article.categoryId;
+    article.featuredImage = req.body.featuredImage || article.featuredImage;
+
+    const updatedArticle = await article.save();
     res.status(200).json(updatedArticle);
   } catch (error) {
     res.status(500).json({ message: 'Error updating article' });
   }
 };
 
-// @desc Delete article
+// @desc Delete an article
 // @route DELETE /api/articles/:id
 const deleteArticle = async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
+
     if (!article) {
       return res.status(404).json({ message: 'Article not found' });
     }
 
-    await article.deleteOne();
+    if (article.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    await article.remove();
     res.status(200).json({ message: 'Article deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting article' });
   }
 };
 
-export { createArticle, getArticles, updateArticle, deleteArticle };
+export { createArticle, getArticles, getArticleById, updateArticle, deleteArticle };
