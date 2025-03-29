@@ -16,4 +16,9 @@ router.get('/:id', getArticleById);
 router.put('/:id', protect, updateArticle);
 router.delete('/:id', protect, deleteArticle);
 
+// Placeholder route
+router.get('/', (req, res) => {
+  res.send('Articles API');
+});
+
 export default router;

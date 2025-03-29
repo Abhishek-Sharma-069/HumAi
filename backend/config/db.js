@@ -12,6 +12,7 @@ const connectDB = async () => {
     return db;
   } catch (error) {
     console.error(`❌ Firestore connection error: ${error.message}`);
+  } catch (error) {
     process.exit(1);
   }
 };
