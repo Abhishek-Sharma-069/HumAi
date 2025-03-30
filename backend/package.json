@@ -8,7 +8,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --trace-warnings index.js",
-    "dev": "nodemon --trace-warnings index.js"
+    "dev": "nodemon --trace-warnings index.js",
+    "build": "vite build" 
   },
   "keywords": [],
   "author": "",
@@ -22,15 +23,19 @@
     "express": "^4.17.1",
     "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.1",
+    "file-type": "^20.4.1",
     "firebase-admin": "^13.2.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.2",
     "multer": "^1.4.5-lts.1",
+    "react-dropzone": "^14.3.8",
+    "sharp": "^0.33.5",
     "winston": "^3.17.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "vite": "^4.0.0" 
   }
 }

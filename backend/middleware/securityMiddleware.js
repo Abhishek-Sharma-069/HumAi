@@ -25,13 +25,14 @@ const securityMiddleware = {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5174', 'http://localhost:3000', 'https://generativelanguage.googleapis.com']
+        connectSrc: ["'self'", 'http://localhost:5174', 'http://localhost:5173', 'http://localhost:3000', 'https://generativelanguage.googleapis.com']
       }
     },
     crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
     crossOriginResourcePolicy: { policy: 'cross-origin' }
   }),
 

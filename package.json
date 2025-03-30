@@ -5,5 +5,8 @@
   "scripts": {
     "export-db": "node scripts/exportFirestore.js",
     "import-db": "node scripts/importFirestore.js"
+  },
+  "devDependencies": {
+    "vite": "^6.2.3"
   }
 }
