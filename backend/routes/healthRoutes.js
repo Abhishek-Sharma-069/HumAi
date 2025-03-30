@@ -16,9 +16,4 @@ router.route("/").post(protect, createHealthRecord).get(protect, getHealthRecord
 router.post("/analyze-symptoms", protect, analyzeSymptoms);
 router.route("/:id").put(protect, updateHealthRecord).delete(protect, deleteHealthRecord);
 
-// Placeholder route
-router.get('/', (req, res) => {
-  res.send('Health API');
-});
-
 export default router;

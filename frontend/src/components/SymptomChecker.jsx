@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { symptomService } from '../services/symptomService';
 
 const SymptomChecker = () => {
@@ -12,6 +11,7 @@ const SymptomChecker = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
 
 
   const handleSubmit = async (e) => {

@@ -1,4 +1,6 @@
-import { db } from '../config/firebase.js';
+import { getFirestore } from 'firebase-admin/firestore';
+
+const db = getFirestore();
 const articlesCollection = db.collection('articles');
 
 const Article = {
