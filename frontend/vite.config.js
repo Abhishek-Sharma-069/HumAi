@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig(({ mode }) => {
-  // Load env file based on mode in the root directory
-  process.env = { ...process.env, ...loadEnv(mode, path.resolve(__dirname, '..'), '') };
+  // Load env file based on mode in the frontend directory
+  process.env = { ...process.env, ...loadEnv(mode, path.resolve(__dirname, '.'), '') };
 
   return {
   plugins: [react()],
