@@ -67,6 +67,10 @@ logger.info('Middleware configured');
 // Static file serving
 app.use(express.static('public'));
 
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/chatbot', chatbotRoutes);
@@ -87,6 +91,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
+  
 });
 
 // Handle unhandled promise rejections
