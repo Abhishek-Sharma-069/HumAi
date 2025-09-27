@@ -8,13 +8,10 @@ import Footer from './components/Footer';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import ConnectionStatus from './components/ConnectionStatus';
-import TrendingArticles from './components/TrendingArticles';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Contact from './pages/Contact';
-import Awareness from './pages/Awareness';
 import SymptomCheckerPage from './pages/SymptomCheckerPage';
-import ArticleDetail from './pages/ArticleDetail';
 import AdminPanel from './admin/AdminPanel';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
@@ -35,9 +32,6 @@ function App() {
               </main>
             } />
             <Route path="/symptom-checker" element={<PrivateRoute><SymptomCheckerPage /></PrivateRoute>} />
-            <Route path="/awareness" element={<Awareness />} />
-            <Route path="/awareness/category/:id" element={<Awareness />} />
-            <Route path="/awareness/article/:id" element={<ArticleDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />

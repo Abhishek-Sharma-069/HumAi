@@ -36,7 +36,6 @@ const Navigation = () => {
     <>
       <Link to="/" className="text-gray-700 hover:text-primary block md:inline-block py-2 md:py-0">Home</Link>
       <Link to="/symptom-checker" className="text-gray-700 hover:text-primary block md:inline-block py-2 md:py-0">Symptom Checker</Link>
-      <Link to="/awareness" className="text-gray-700 hover:text-primary block md:inline-block py-2 md:py-0">Awareness</Link>
       <Link to="/contact" className="text-gray-700 hover:text-primary block md:inline-block py-2 md:py-0">Contact</Link>
       {user ? (
         <>

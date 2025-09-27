@@ -14,17 +14,6 @@ const Features = () => {
       ),
     },
     {
-      title: 'Health Awareness',
-      description: 'Stay informed with articles, videos, and daily health tips.',
-      icon: (
-        <path
-          d="M13 10V3L4 14h7v7l9-11h-7z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      ),
-    },
-    {
       title: 'Secure & Private',
       description: 'Your health data is protected with advanced encryption and privacy measures.',
       icon: (

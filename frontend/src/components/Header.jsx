@@ -22,7 +22,6 @@ const Header = () => {
         <nav className="space-x-4">
           <Link to="/" className="text-gray-700 hover:text-primary">Home</Link>
           <Link to="/symptom-checker" className="text-gray-700 hover:text-primary">Symptom Checker</Link>
-          <Link to="/awareness" className="text-gray-700 hover:text-primary">Awareness</Link>
           <Link to="/contact" className="text-gray-700 hover:text-primary">Contact</Link>
           {user ? (
             <>

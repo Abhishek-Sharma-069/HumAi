@@ -7,12 +7,10 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: resolve(__dirname, '.env') });
 
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
-import articleRoutes from './routes/articleRoutes.js';
 import securityMiddleware from './middleware/securityMiddleware.js';
 import LoggerService from './services/loggerService.js';
 
@@ -40,7 +38,7 @@ app.use(securityMiddleware.customHeaders);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5174',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -55,7 +53,6 @@ app.use(express.static('public'));
 app.use('/api/users', userRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/health', healthRoutes);
-app.use('/api/articles', articleRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -68,36 +65,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// Database connection
-console.log('🔍 Connecting to MongoDB...');
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
-
-// Routes
-console.log('🔍 Setting up routes...');
-app.get('/', (req, res) => {
-  res.send("Welcome to the Health Chatbot API");
-});
-
-app.use("/api/users", userRoutes);
-app.use("/api/chatbot", chatbotRoutes);
-app.use("/api/health", healthRoutes);
-app.use("/api/articles", articleRoutes);
-
-// Debugging: Log route setup
-console.log('✅ Routes configured');
-
 // Start the server
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  logger.info(`Server running on http://localhost:${PORT}`);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
-  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
-  console.error(err.name, err.message);
+  logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
+  logger.error(err.name, err.message);
   server.close(() => {
     process.exit(1);
   });
@@ -105,8 +82,8 @@ process.on('unhandledRejection', (err) => {
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  console.error(err.name, err.message);
+  logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  logger.error(err.name, err.message);
   process.exit(1);
 });
 

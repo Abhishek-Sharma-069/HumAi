@@ -29,7 +29,6 @@ const Footer = () => {
             <ul className="space-y-2">
               <li><a href="/" className="text-gray-600 hover:text-primary">Home</a></li>
               <li><a href="/symptom-checker" className="text-gray-600 hover:text-primary">Symptom Checker</a></li>
-              <li><a href="/awareness" className="text-gray-600 hover:text-primary">Health Awareness Hub</a></li>
               <li><a href="/doctor" className="text-gray-600 hover:text-primary">Doctor Consultation</a></li>
               <li><a href="/contact" className="text-gray-600 hover:text-primary">Contact Us</a></li>
             </ul>

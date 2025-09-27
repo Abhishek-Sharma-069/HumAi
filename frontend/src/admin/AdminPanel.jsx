@@ -52,7 +52,6 @@ const AdminPanel = () => {
       
       <div className="mb-6">
         <div className="flex space-x-4 mb-4">
-          <Button onClick={() => navigate('/admin/articles')}>Articles</Button>
           <Button onClick={() => navigate('/admin/users')}>Manage Users</Button>
         </div>
 

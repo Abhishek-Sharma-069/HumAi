@@ -6,15 +6,33 @@ const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 const makeGeminiRequest = async (prompt) => {
-  const result = await model.generateContent({
-    contents: [{
-      parts: [{ text: prompt }]
-    }]
-  });
+  try {
+    // 4. For simple text, you can pass the prompt string directly
+    const result = await model.generateContent(prompt);
+    
+    const response = result.response;
+    
+    // 2. Call the text() method to get the string output
+    const text = response.text();
+    
+    console.log("--- Full Response Object ---");
+    console.log(response);
 
-  const response = await result.response;
-  return response;
+    console.log("\n--- Generated Text ---");
+    console.log(text);
+    
+    // 3. To access candidates (optional, usually for more advanced use)
+    // console.log(response.candidates);
+
+    return text; // Return the generated text
+
+  } catch (error) {
+    // 5. Add error handling
+    console.error("Error making Gemini request:", error);
+    return null;
+  }
 };
+
 
 // @desc Analyze symptoms using Gemini API
 // @route POST /api/health/analyze-symptoms
@@ -36,8 +54,14 @@ const analyzeSymptoms = async (req, res) => {
 
       Format the response in a clear, structured way.`;
 
-    const result = await makeGeminiRequest(prompt);
-    const text = result.candidates[0].content.parts[0].text;
+    const text = await makeGeminiRequest(prompt);
+    
+    if (!text) {
+      return res.status(500).json({
+        message: 'Failed to generate analysis',
+        error: 'Gemini API returned no response'
+      });
+    }
 
     // Parse the response and structure it
     const analysis = {
@@ -48,31 +72,57 @@ const analyzeSymptoms = async (req, res) => {
     };
 
     // Extract information from the text response
-    const sections = text.split('\n');
-    sections.forEach(section => {
-      if (section.includes('Possible conditions')) {
-        analysis.possibleConditions = section
-          .replace('Possible conditions:', '')
-          .split('-')
-          .filter(item => item.trim())
-          .map(item => item.trim());
-      } else if (section.includes('Urgency level')) {
-        const urgencyMatch = section.match(/(Mild|Moderate|Severe)/);
-        if (urgencyMatch) {
-          analysis.probability = urgencyMatch[0];
-        }
-      } else if (section.includes('Recommended actions')) {
-        analysis.recommendedActions = section
-          .replace('Recommended actions:', '')
-          .split('-')
-          .filter(item => item.trim())
-          .map(item => item.trim());
-      } else if (section.includes('General analysis')) {
-        analysis.generalAnalysis = section
-          .replace('General analysis:', '')
-          .trim();
+    console.log("Raw text from Gemini:", text);
+    
+    // Helper function to clean markdown formatting
+    const cleanText = (text) => {
+      return text.replace(/\*\*/g, '') // Remove bold formatting
+                 .replace(/\*/g, '') // Remove remaining asterisks
+                 .replace(/^\s*-\s*/, '') // Remove bullet point dashes
+                 .trim();
+    };
+    
+    // Extract Possible Conditions with Probability
+    const conditionsMatch = text.match(/\*\*1\. Possible Conditions \(with Probability Levels\):\*\*\s*\n([\s\S]*?)(?=\*\*2\.|$)/);
+    if (conditionsMatch) {
+      analysis.possibleConditions = conditionsMatch[1]
+        .split('\n')
+        .filter(line => line.trim().length > 0) // Filter out empty lines
+        .map(line => cleanText(line))
+        .filter(item => item.length > 0 && !item.match(/^\d+\./)); // Remove numbered headers
+    }
+    
+    // Extract overall probability/urgency level from the conditions
+    const overallUrgencyMatch = text.match(/\*\*2\. Urgency Level:\*\*\s*\n[\s\*]*\*\*(Mild|Moderate|Severe)\*\*/);
+    if (overallUrgencyMatch) {
+      analysis.probability = overallUrgencyMatch[1];
+    } else {
+      // Fallback: try to determine probability from conditions
+      const conditionsText = conditionsMatch ? conditionsMatch[1] : '';
+      if (conditionsText.includes('High Probability') || conditionsText.includes('Severe')) {
+        analysis.probability = 'High';
+      } else if (conditionsText.includes('Moderate Probability') || conditionsText.includes('Moderate')) {
+        analysis.probability = 'Moderate';
+      } else if (conditionsText.includes('Low Probability') || conditionsText.includes('Mild')) {
+        analysis.probability = 'Low';
       }
-    });
+    }
+    
+    // Extract Recommended Actions
+    const actionsMatch = text.match(/\*\*3\. Recommended Actions:\*\*\s*\n([\s\S]*?)(?=\*\*4\.|$)/);
+    if (actionsMatch) {
+      analysis.recommendedActions = actionsMatch[1]
+        .split('\n')
+        .filter(line => line.trim().startsWith('*') || line.trim().match(/^\s*\*\*/))
+        .map(line => cleanText(line))
+        .filter(item => item.length > 0);
+    }
+    
+    // Extract General Analysis
+    const analysisMatch = text.match(/\*\*5\. General Analysis:\*\*\s*\n([\s\S]*?)(?=\*\*Disclaimer|$)/);
+    if (analysisMatch) {
+      analysis.generalAnalysis = cleanText(analysisMatch[1]);
+    }
 
     res.status(200).json(analysis);
   } catch (error) {

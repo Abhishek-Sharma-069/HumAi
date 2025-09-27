@@ -33,7 +33,6 @@ const SymptomChecker = () => {
 
     try {
       const analysisReport = await symptomService.analyzeSymptoms(symptoms);
-      console.log('Symptom Analysis Response:', analysisReport);
       
       if (!analysisReport) {
         throw new Error('Invalid or empty response from Gemini API');

@@ -18,7 +18,6 @@ const Login = () => {
     setError('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log('Successfully logged in');
       navigate('/');
     } catch (error) {
       const errorMessage = 
@@ -37,7 +36,6 @@ const Login = () => {
     setError('');
     try {
       await signInWithGoogle();
-      console.log('Successfully signed in with Google');
       navigate('/');
     } catch (error) {
       const errorMessage = 
