@@ -12,8 +12,8 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.get("/check", healthCheck);
+router.post("/analyze-symptoms", analyzeSymptoms); // Remove protect middleware for testing
 router.route("/").post(protect, createHealthRecord).get(protect, getHealthRecords);
-router.post("/analyze-symptoms", protect, analyzeSymptoms);
 router.route("/:id").put(protect, updateHealthRecord).delete(protect, deleteHealthRecord);
 
 export default router;

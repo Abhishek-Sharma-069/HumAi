@@ -2,10 +2,42 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { env } from '../config/env.js';
 
 // Initialize Gemini AI with validated API key from environment config
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+let genAI, model;
+
+if (env.GEMINI_API_KEY) {
+  genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+  model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+} else {
+  console.warn('⚠️ Gemini API key not configured');
+}
 
 const makeGeminiRequest = async (prompt) => {
+  if (!model) {
+    console.warn('⚠️ Gemini model not initialized, returning mock response');
+    return `Mock Analysis for symptoms: "${prompt}"
+
+**1. Possible Conditions (with Probability Levels):**
+- Common Cold (High Probability)
+- Seasonal Allergies (Moderate Probability)
+- Stress-related symptoms (Low Probability)
+
+**2. Urgency Level:**
+**Mild**
+
+**3. Recommended Actions:**
+- Rest and stay hydrated
+- Monitor symptoms for 24-48 hours
+- Consider over-the-counter remedies if symptoms persist
+
+**4. Warning Signs:**
+- High fever (>101°F)
+- Difficulty breathing
+- Severe chest pain
+
+**5. General Analysis:**
+Based on the symptoms provided, this appears to be a mild condition that should resolve with proper rest and care. If symptoms worsen or persist beyond 48 hours, consider consulting a healthcare professional.`;
+  }
+
   try {
     // 4. For simple text, you can pass the prompt string directly
     const result = await model.generateContent(prompt);

@@ -30,3 +30,4 @@ lerna-debug.log*
 
 # Firebase
 config/serviceAccountKey.json
+.vercel

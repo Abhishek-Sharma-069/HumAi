@@ -36,7 +36,7 @@ api.interceptors.response.use(
 
 export const healthService = {
   checkSymptoms: async (symptoms) => {
-    const response = await api.post('/health/check-symptoms', { symptoms });
+    const response = await api.post('/health/analyze-symptoms', { symptoms });
     return response.data;
   }
 };
@@ -54,7 +54,7 @@ export const articleService = {
 
 export const chatbotService = {
   sendMessage: async (message) => {
-    const response = await api.post('/chatbot/message', { message });
+    const response = await api.post('/chatbot/chat', { message });
     return response.data;
   }
 };
