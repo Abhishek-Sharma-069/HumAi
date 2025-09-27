@@ -10,6 +10,7 @@
     "start": "node index.js",
     "dev": "nodemon --trace-warnings index.js",
     "build": "echo 'No build step required'",
+    "vercel-build": "echo 'No build step required'",
     "prod": "NODE_ENV=production node index.js",
     "pm2:start": "pm2 start ecosystem.config.js --env production",
     "pm2:stop": "pm2 stop humai-backend",

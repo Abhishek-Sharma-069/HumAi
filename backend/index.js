@@ -70,7 +70,7 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
   res.send('Server is running');
 });
-
+g
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/chatbot', chatbotRoutes);
