@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +19,24 @@ const Signup = () => {
       return setError('Passwords do not match');
     }
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Update the user's display name
+      await updateProfile(user, {
+        displayName: email.split('@')[0]
+      });
+      
+      // Create user document in Firestore
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, {
+        name: email.split('@')[0],
+        email: email,
+        role: 'user',
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString()
+      });
+      
       console.log('Account created successfully');
       navigate('/');
     } catch (error) {

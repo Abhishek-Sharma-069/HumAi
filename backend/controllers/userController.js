@@ -86,6 +86,87 @@ const loginUser = async (req, res) => {
   }
 };
 
+// @desc Get all users (admin only)
+// @route GET /api/users
+const getAllUsers = async (req, res) => {
+  try {
+    const usersSnapshot = await db.collection('users').get();
+    const users = [];
+    
+    usersSnapshot.forEach(doc => {
+      users.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    res.json({
+      success: true,
+      count: users.length,
+      data: users
+    });
+  } catch (error) {
+    console.error('Error fetching all users:', error);
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+};
+
+// @desc Sync all Firebase Auth users to Firestore (admin only)
+// @route POST /api/users/sync
+const syncAllUsers = async (req, res) => {
+  try {
+    // Get all users from Firebase Auth
+    const listUsersResult = await auth.listUsers();
+    const authUsers = listUsersResult.users;
+    
+    let syncedCount = 0;
+    let skippedCount = 0;
+    
+    for (const authUser of authUsers) {
+      try {
+        // Check if user exists in Firestore
+        const userRef = db.collection('users').doc(authUser.uid);
+        const userDoc = await userRef.get();
+        
+        if (!userDoc.exists) {
+          // User doesn't exist in Firestore, create them
+          await userRef.set({
+            name: authUser.displayName || authUser.email.split('@')[0],
+            email: authUser.email,
+            role: 'user',
+            createdAt: authUser.metadata.creationTime,
+            lastLoginAt: authUser.metadata.lastSignInTime || authUser.metadata.creationTime
+          });
+          syncedCount++;
+          console.log(`Synced user: ${authUser.email}`);
+        } else {
+          // User exists, update last login if needed
+          const userData = userDoc.data();
+          if (!userData.lastLoginAt && authUser.metadata.lastSignInTime) {
+            await userRef.update({
+              lastLoginAt: authUser.metadata.lastSignInTime
+            });
+          }
+          skippedCount++;
+        }
+      } catch (error) {
+        console.error(`Error syncing user ${authUser.email}:`, error);
+      }
+    }
+    
+    res.json({
+      success: true,
+      message: `Sync completed. ${syncedCount} users synced, ${skippedCount} users already existed.`,
+      syncedCount,
+      skippedCount,
+      totalAuthUsers: authUsers.length
+    });
+  } catch (error) {
+    console.error('Error syncing users:', error);
+    res.status(500).json({ message: 'Error syncing users' });
+  }
+};
+
 // @desc Get user profile
 // @route GET /api/users/:id
 const getUserProfile = async (req, res) => {
@@ -161,6 +242,7 @@ const updateUserProfile = async (req, res) => {
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
+    if (req.body.role) updateData.role = req.body.role;
     updateData.updatedAt = new Date().toISOString();
 
     // Update in Firestore
@@ -231,4 +313,4 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-export { registerUser, loginUser, getUserProfile, updateUserProfile, deleteUser };
+export { registerUser, loginUser, getAllUsers, syncAllUsers, getUserProfile, updateUserProfile, deleteUser };

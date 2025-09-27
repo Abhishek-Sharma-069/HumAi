@@ -72,7 +72,6 @@ const analyzeSymptoms = async (req, res) => {
     };
 
     // Extract information from the text response
-    console.log("Raw text from Gemini:", text);
     
     // Helper function to clean markdown formatting
     const cleanText = (text) => {

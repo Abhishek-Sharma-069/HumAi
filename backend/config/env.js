@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
 import { z } from 'zod';
 
-// Load environment variables from root directory
-config({ path: '../../.env' });
+// Load environment variables from backend directory
+config({ path: '.env' });
 
 // Define validation schema for environment variables
 const envSchema = z.object({
@@ -17,7 +17,7 @@ const envSchema = z.object({
   FIREBASE_TOKEN: z.string().min(1),
 
   // Frontend Environment Variables
-  FRONTEND_URL: z.string().url().optional().default('http://localhost:5174'),
+  FRONTEND_URL: z.string().optional().default('http://localhost:5173'),
 
   // Backend Environment Variables
   PORT: z.string().transform(Number).pipe(z.number().positive()),

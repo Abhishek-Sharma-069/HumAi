@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
-import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
+import api from '../services/api';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -14,12 +14,12 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      const usersData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setUsers(usersData);
+      const response = await api.get('/users');
+      if (response.data.success) {
+        setUsers(response.data.data);
+      } else {
+        throw new Error('Failed to fetch users');
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Failed to fetch users');
@@ -30,10 +30,8 @@ const UserManagement = () => {
 
   const handleRoleUpdate = async (userId, newRole) => {
     try {
-      const userRef = doc(db, 'users', userId);
-      await updateDoc(userRef, {
-        role: newRole,
-        updatedAt: new Date().toISOString()
+      await api.put(`/users/${userId}`, {
+        role: newRole
       });
       toast.success('User role updated successfully');
       fetchUsers();
@@ -47,7 +45,7 @@ const UserManagement = () => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      await deleteDoc(doc(db, 'users', userId));
+      await api.delete(`/users/${userId}`);
       toast.success('User deleted successfully');
       fetchUsers();
     } catch (error) {
@@ -56,9 +54,36 @@ const UserManagement = () => {
     }
   };
 
+  const handleSyncUsers = async () => {
+    setSyncing(true);
+    try {
+      const response = await api.post('/users/sync');
+      if (response.data.success) {
+        toast.success(response.data.message);
+        fetchUsers(); // Refresh the user list
+      } else {
+        throw new Error('Sync failed');
+      }
+    } catch (error) {
+      console.error('Error syncing users:', error);
+      toast.error('Failed to sync users');
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">User Management</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">User Management</h2>
+        <button
+          onClick={handleSyncUsers}
+          disabled={syncing}
+          className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          {syncing ? 'Syncing...' : 'Sync All Users'}
+        </button>
+      </div>
       
       {loading ? (
         <div className="text-center">Loading users...</div>

@@ -28,7 +28,7 @@ const securityMiddleware = {
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5174', 'http://localhost:3000', 'https://generativelanguage.googleapis.com']
+        connectSrc: ["'self'", process.env.FRONTEND_URL || process.env.FRONTEND_URL2 || process.env.FRONTEND_URL3 || process.env.FRONTEND_URL4]
       }
     },
     crossOriginEmbedderPolicy: false,
